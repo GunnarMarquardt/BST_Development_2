@@ -1,7 +1,7 @@
-/* 
+/*
 280
-Gunnar Marquardt && Thomas Evon
 BST_Development_2
+Gunnar Marquardt && Thomas Evon
 */
 
 #include <iostream>
@@ -16,12 +16,14 @@ struct Node {
 class BST {
 private:
 	int size = 0;
+	int sum = 0; 
 	Node* root;
 	Node* insert(int, Node*); //helper
 	void displayInOrder(Node*); //helper
 	int howMany(Node*); //helper
 	void treeClear(Node*); //helper
 	void display(Node*, int);
+	void sumInRange(int, int, Node*); // helper
 public:
 	BST();
 	void insert(int);
@@ -30,7 +32,7 @@ public:
 	int treeSize();
 	void treeClear();
 	int sumInRange(int, int);
-	void display(); 
+	void display();
 }; //BST class
 
 //helper functions
@@ -50,14 +52,6 @@ Node* BST::insert(int v, Node* r) {
 		return r;
 	}
 } //helper
-
-int BST::howMany(Node* r) {
-	if (r == nullptr)
-		return 0;
-	else
-		return 1 + howMany(r->left) + howMany(r->right);
-} //helper
-
 
 void BST::displayInOrder(Node* r) {
 	if (r != nullptr)
@@ -93,6 +87,13 @@ int BST::howMany() {
 	return howMany(root);
 }
 
+int BST::howMany(Node* r) {
+	if (r == nullptr)
+		return 0;
+	else
+		return 1 + howMany(r->left) + howMany(r->right);
+} //helper
+
 int BST::treeSize() {
 	return size;
 }
@@ -104,6 +105,7 @@ void BST::displayInOrder() {
 
 void BST::treeClear() {
 	treeClear(root);
+	root = nullptr;
 	size = 0;
 }
 
@@ -129,19 +131,20 @@ void BST::display() {
 	display(root, 1);
 } // display (pretty tree)
 
+void BST::sumInRange(int min, int max, Node* n) {
+	if (n == nullptr) return;
+	if (n->data >= min && n->data <= max) sum += n->data;
+	if (n->data >= min) {
+		sumInRange(min, max, n->left);
+	}
+	if (n->data <= max) {
+		sumInRange(min, max, n->right);
+	}
+}
+
 int BST::sumInRange(int min, int max) {
-	Node* runner = root;
-	int sum = 0; 
-	if (runner == nullptr) return 0; 
-	while (runner != nullptr && runner->data >= min) {
-		sum += runner->data;
-		runner = runner->left;
-	}
-	runner = root->right;
-	while (runner != nullptr && runner->data <= max) {
-		sum += runner->data;
-		runner = runner->right; 
-	}
+	sum = 0;
+	sumInRange(min, max, root);
 	return sum; 
 }
 
@@ -154,11 +157,13 @@ int main() {
 		cout << "Choose Your Function:" << endl;
 		cout << "<<<<<<<<<<<<<<<<<<<<<" << endl;
 		cout << "1.Insert Recursive" << endl;
-		cout << "2.SuminRange" << endl; 
+		cout << "2.SuminRange" << endl;
 		cout << "3.Pretty Tree Display" << endl;
 		cout << "4.Display in Order" << endl;
 		cout << "5.Get Number of Nodes (howMany)" << endl;
-		cout << "6.Quit" << endl;
+		cout << "6.Get Tree Size" << endl;
+		cout << "7.Clear Tree" << endl;
+		cout << "8.Quit" << endl;
 		cout << endl << "Enter your choice : ";
 		cin >> input;
 		switch (input) {
@@ -171,8 +176,8 @@ int main() {
 			int min, max;
 			cout << "Enter your min and max values: ";
 			cin >> min >> max;
-			if (min > max) cout << "ERROR, your min is greater than your max!" << endl; 
-			cout << "Sum is = " << bst.sumInRange(min, max) << endl;
+			if (min > max) cout << "ERROR, your min is greater than your max!" << endl;
+			cout << "Sum output is = " << bst.sumInRange(min, max) << endl;
 			break;
 		case 3:
 			cout << endl << "Display pretty tree:" << endl
@@ -188,6 +193,12 @@ int main() {
 			cout << "The number of nodes are: " << bst.howMany();
 			break;
 		case 6:
+			cout << "The number of nodes is: " << bst.treeSize();
+			break;
+		case 7:
+			bst.treeClear();
+			break;
+		case 8:
 			cout << "Program TERMINATED" << endl;
 			exit(0);
 			break;
