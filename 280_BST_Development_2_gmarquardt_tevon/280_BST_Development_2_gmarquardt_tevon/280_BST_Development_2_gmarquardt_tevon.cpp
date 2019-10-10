@@ -21,7 +21,8 @@ private:
 	void displayInOrder(Node*); //helper
 	int howMany(Node*); //helper
 	void treeClear(Node*); //helper
-	void display(Node*, int);
+	void display(Node*, int); //helper
+	int sumInRangeRecursive(int, int, Node*); //helper
 public:
 	BST();
 	void insert(int);
@@ -30,6 +31,7 @@ public:
 	int treeSize();
 	void treeClear();
 	int sumInRange(int, int);
+	int sumInRangeRecursive(int, int);
 	void display();
 }; //BST class
 
@@ -75,6 +77,21 @@ void BST::treeClear(Node* n) {
 		delete n;
 	}
 	return;
+} //helper
+
+int BST::sumInRangeRecursive(int min, int max, Node* n) {
+	if (n == nullptr) {
+		return 0;
+	}
+	else if (n->data < min) {
+		return sumInRangeRecursive(min, max, n->right);
+	}
+	else if (n->data > max) {
+		return sumInRangeRecursive(min, max, n->left);
+	}
+	else {
+		return n->data + sumInRangeRecursive(min, max, n->left) + sumInRangeRecursive(min, max, n->right);
+	}
 } //helper
 
 //constructors
@@ -146,8 +163,12 @@ int BST::sumInRange(int min, int max) {
 	return sum;
 }
 
+int BST::sumInRangeRecursive(int min, int max) {
+	return sumInRangeRecursive(min, max, root);
+}
+
 int main() {
-	int input, num;
+	int input, num, min, max;
 	BST bst = BST();
 	while (1) {
 		cout << endl << endl;
@@ -161,7 +182,8 @@ int main() {
 		cout << "5.Get Number of Nodes (howMany)" << endl;
 		cout << "6.Get Tree Size" << endl;
 		cout << "7.Clear Tree" << endl;
-		cout << "8.Quit" << endl;
+		cout << "8.Sum in Range Recursive" << endl;
+		cout << "9.Quit" << endl;
 		cout << endl << "Enter your choice : ";
 		cin >> input;
 		switch (input) {
@@ -171,7 +193,6 @@ int main() {
 			bst.insert(num);
 			break;
 		case 2:
-			int min, max;
 			cout << "Enter your min and max values: ";
 			cin >> min >> max;
 			if (min > max) cout << "ERROR, your min is greater than your max!" << endl;
@@ -197,6 +218,12 @@ int main() {
 			bst.treeClear();
 			break;
 		case 8:
+			cout << "Enter your min and max values: ";
+			cin >> min >> max;
+			if (min > max) cout << "ERROR, your min is greater than your max!" << endl;
+			cout << "Sum is = " << bst.sumInRangeRecursive(min, max) << endl;
+			break;
+		case 9:
 			cout << "Program TERMINATED" << endl;
 			exit(0);
 			break;
